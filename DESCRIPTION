@@ -1,0 +1,28 @@
+Package: nnl
+Title: find nearest lines of source B to lines of source A and extrapol B to A
+Version: 0.1
+Authors@R: 
+    person(given = "Nicolas",
+           family = "Aubin",
+           role = c("aut", "cre"),
+           email = "aubinnic@gmail.com",
+           comment = c(ORCID = "0000-0002-0289-9924"))
+Description: What the package does (one paragraph).
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+Imports: 
+    foreach,
+    parallel,
+    sp,
+    doParallel,
+    methods,
+    data.table,
+    SearchTrees,
+    plyr,
+    stats
+RoxygenNote: 7.0.2
