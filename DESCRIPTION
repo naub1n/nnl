@@ -24,5 +24,6 @@ Imports:
     data.table,
     SearchTrees,
     plyr,
-    stats
+    stats,
+    raster
 RoxygenNote: 7.0.2

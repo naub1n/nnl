@@ -13,10 +13,35 @@
 #'
 #' @return a SpatialLinesDataFrame.
 #'
+#' @importFrom raster compareCRS
+#'
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' url_bresle <- paste0("https://api.sandre.eaufrance.fr/",
+#'                      "coursdeau/v1/amont/G01-0400?pk_vid=aade75889c86a2471576396546bb9c85")
+#' river_bresle <- rgdal::readOGR(url_bresle)
+#'
+#' url_example <- "https://raw.githubusercontent.com/naub1n/nnl/master/example/example.geojson"
+#' example <- rgdal::readOGR(url_example)
+#'
+#' river_bresle <- sp::spTransform(river_bresle, sp::CRS("+init=epsg:2154"))
+#'
+#' extrapolate_example <- nnl(l_A = example,
+#'                            l_B = river_bresle,
+#'                            id_l_A = "ID_EXAMPLE",
+#'                            id_l_B = "CdEntiteHydrographique")
+#'
+#' plot(river_bresle, col = "blue")
+#' plot(example, col = "green", add = T)
+#' plot(extrapolate_example, col = "red", add = T )
+#' }
 nnl <- function(l_A, l_B, id_l_A, id_l_B, id_p_A = "ID_PTS_A", id_p_B = "ID_PTS_B", step = 5, rate = 45, p = T, ncores = NULL){
+  #test CRS comparaison
+  if(!raster::compareCRS(l_A, l_B)) stop("SpatialPointsDataFrames have not the same CRS")
+  #test projection info. objects should be in planar coordinates (cf sp::sample)
+  if(!is.projected(l_A) || !is.projected(l_B)) stop("Objects should be in planar coordinates")
   #create points along lines A
   points_A <- create_pts(l = l_A, id_l = id_l_A, id_p = id_p_A, step = step, p = p, ncores = ncores)
   #create points along lines B
@@ -33,7 +58,7 @@ nnl <- function(l_A, l_B, id_l_A, id_l_B, id_p_A = "ID_PTS_A", id_p_B = "ID_PTS_
                         id_l_B = id_l_B,
                         rate = rate)
   #find discontinuities
-  np_step2 <- nnl_step2(l_B = l_B, r_s1_A = np_step1, id_l_B = id_l_B,id_l_A = id_l_A)
+  np_step2 <- nnl_step2(l_B = l_B, r_s1_A = np_step1, id_l_B = id_l_B, id_l_A = id_l_A)
   #select only columns with IDs of lines A and B on step 1
   nnl_s1 <- np_step1[, c(id_l_A, id_l_B)]
   #Idem on step 2
@@ -44,6 +69,15 @@ nnl <- function(l_A, l_B, id_l_A, id_l_B, id_p_A = "ID_PTS_A", id_p_B = "ID_PTS_
   nnl_sldf <- l_B[l_B@data[, id_l_B] %in% nnl_full[, id_l_B],]
   #add lines A IDs to nearest lines B
   nnl_sldf <- merge(nnl_sldf, nnl_full, by = id_l_B, all.x = T)
+  #calculate Line A total length
+  length_l_A <- sum(sapply(methods::slot(l_A,"lines"), function(x) sp::LinesLength(x)))
+  #calculate nnl result total length
+  length_nnl <- sum(sapply(methods::slot(nnl_sldf,"lines"), function(x) sp::LinesLength(x)))
+  #calculate difference
+  diff_length <- round(abs((length_l_A-length_nnl)/length_l_A)*100)
+  #Warning if difference is too hight
+  if(diff_length > 20) warning(paste(paste0("Difference between SpatialLine A length and SpatialLine nnl result length is upper than 20% : ", diff_length, "%"),
+                                     "@lines length of SpatialLine B should be smaller than @lines length of SpatialLine A", sep = "\n"))
   #return Spatial
   return(nnl_sldf)
 }

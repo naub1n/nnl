@@ -44,3 +44,24 @@ a SpatialLinesDataFrame.
 \description{
 Complete and unique function to extrapolate a SpatialLinesDataFrame A to a SpatialLinesDataFrame B
 }
+\examples{
+\dontrun{
+url_bresle <- paste0("https://api.sandre.eaufrance.fr/",
+                     "coursdeau/v1/amont/G01-0400?pk_vid=aade75889c86a2471576396546bb9c85")
+river_bresle <- rgdal::readOGR(url_bresle)
+
+url_example <- "https://raw.githubusercontent.com/naub1n/nnl/master/example/example.geojson"
+example <- rgdal::readOGR(url_example)
+
+river_bresle <- sp::spTransform(river_bresle, sp::CRS("+init=epsg:2154"))
+
+extrapolate_example <- nnl(l_A = example,
+                           l_B = river_bresle,
+                           id_l_A = "ID_EXAMPLE",
+                           id_l_B = "CdEntiteHydrographique")
+
+plot(river_bresle, col = "blue")
+plot(example, col = "green", add = T)
+plot(extrapolate_example, col = "red", add = T )
+}
+}
