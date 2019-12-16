@@ -13,6 +13,7 @@ nnl(
   id_p_B = "ID_PTS_B",
   step = 5,
   rate = 45,
+  cut = F,
   p = T,
   ncores = NULL
 )
@@ -24,7 +25,7 @@ nnl(
 
 \item{id_l_A}{a character string. IDs Column name of reference SpatialLinesDataFrame (Lines A)}
 
-\item{id_l_B}{a character string. IDs Column name of reference SpatialLinesDataFrame (Lines B)}
+\item{id_l_B}{a character string. IDs Column name of searched SpatialLinesDataFrame (Lines B)}
 
 \item{id_p_A}{a character string. Indicates the IDs column name of points created to lines A. Default : "ID_PTS_A"}
 
@@ -33,6 +34,8 @@ nnl(
 \item{step}{an integer. Define the distance between two points along the line in meters. Defautl = 5.}
 
 \item{rate}{an integer. Between 0 and 100. Define lower limit to select line B. Rate between number of points B on Lines A and totalpoints on Line B.}
+
+\item{cut}{a boolean. Define if function cut SpatialLinesDataFrame B to a smaller entities.}
 
 \item{p}{a boolean. Define if function use multithreading. Default = TRUE.}
 
@@ -58,7 +61,8 @@ river_bresle <- sp::spTransform(river_bresle, sp::CRS("+init=epsg:2154"))
 extrapolate_example <- nnl(l_A = example,
                            l_B = river_bresle,
                            id_l_A = "ID_EXAMPLE",
-                           id_l_B = "CdEntiteHydrographique")
+                           id_l_B = "CdEntiteHydrographique",
+                           cut = T)
 
 plot(river_bresle, col = "blue")
 plot(example, col = "green", add = T)

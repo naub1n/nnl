@@ -3,11 +3,12 @@
 #' @param l_A a SpatialLinesDataFrame. Reference lines.
 #' @param l_B a SpatialLinesDataFrame. Searched lines.
 #' @param id_l_A a character string. IDs Column name of reference SpatialLinesDataFrame (Lines A)
-#' @param id_l_B a character string. IDs Column name of reference SpatialLinesDataFrame (Lines B)
+#' @param id_l_B a character string. IDs Column name of searched SpatialLinesDataFrame (Lines B)
 #' @param id_p_A a character string. Indicates the IDs column name of points created to lines A. Default : "ID_PTS_A"
 #' @param id_p_B a character string. Indicates the IDs column name of points created to lines B. Default : "ID_PTS_B"
 #' @param step an integer. Define the distance between two points along the line in meters. Defautl = 5.
 #' @param rate an integer. Between 0 and 100. Define lower limit to select line B. Rate between number of points B on Lines A and totalpoints on Line B.
+#' @param cut a boolean. Define if function cut SpatialLinesDataFrame B to a smaller entities.
 #' @param p a boolean. Define if function use multithreading. Default = TRUE.
 #' @param ncores an integer. Number of CPU cores used. If NULL, all cores - 1 are used.
 #'
@@ -31,17 +32,20 @@
 #' extrapolate_example <- nnl(l_A = example,
 #'                            l_B = river_bresle,
 #'                            id_l_A = "ID_EXAMPLE",
-#'                            id_l_B = "CdEntiteHydrographique")
+#'                            id_l_B = "CdEntiteHydrographique",
+#'                            cut = T)
 #'
 #' plot(river_bresle, col = "blue")
 #' plot(example, col = "green", add = T)
 #' plot(extrapolate_example, col = "red", add = T )
 #' }
-nnl <- function(l_A, l_B, id_l_A, id_l_B, id_p_A = "ID_PTS_A", id_p_B = "ID_PTS_B", step = 5, rate = 45, p = T, ncores = NULL){
+nnl <- function(l_A, l_B, id_l_A, id_l_B, id_p_A = "ID_PTS_A", id_p_B = "ID_PTS_B", step = 5, rate = 45, cut = F, p = T, ncores = NULL){
   #test CRS comparaison
   if(!raster::compareCRS(l_A, l_B)) stop("SpatialPointsDataFrames have not the same CRS")
   #test projection info. objects should be in planar coordinates (cf sp::sample)
   if(!is.projected(l_A) || !is.projected(l_B)) stop("Objects should be in planar coordinates")
+  #cut l_B
+  if(cut) l_B <- cut_sldf(l = l_B, id_l = id_l_B)
   #create points along lines A
   points_A <- create_pts(l = l_A, id_l = id_l_A, id_p = id_p_A, step = step, p = p, ncores = ncores)
   #create points along lines B
@@ -77,7 +81,8 @@ nnl <- function(l_A, l_B, id_l_A, id_l_B, id_p_A = "ID_PTS_A", id_p_B = "ID_PTS_
   diff_length <- round(abs((length_l_A-length_nnl)/length_l_A)*100)
   #Warning if difference is too hight
   if(diff_length > 20) warning(paste(paste0("Difference between SpatialLine A length and SpatialLine nnl result length is upper than 20% : ", diff_length, "%"),
-                                     "@lines length of SpatialLine B should be smaller than @lines length of SpatialLine A", sep = "\n"))
+                                     "@lines length of SpatialLine B should be smaller than @lines length of SpatialLine A",
+                                     "Try to use cut=TRUE in nnl() function, it transform SpatialLine B to a smaller segments", sep = "\n"))
   #return Spatial
   return(nnl_sldf)
 }

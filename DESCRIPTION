@@ -1,6 +1,6 @@
 Package: nnl
 Title: find nearest lines of source B to lines of source A and extrapol B to A
-Version: 0.1
+Version: 0.2
 Authors@R: 
     person(given = "Nicolas",
            family = "Aubin",
