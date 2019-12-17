@@ -23,7 +23,7 @@ Imports:
     methods,
     data.table,
     SearchTrees,
-    plyr,
     stats,
-    raster
+    raster,
+    dplyr
 RoxygenNote: 7.0.2

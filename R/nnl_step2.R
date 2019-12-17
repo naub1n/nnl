@@ -8,8 +8,7 @@
 #' @return a data.frame. Contains discontinuities.
 #'
 #' @importFrom stats sd
-#' @importFrom plyr ddply
-#' @importFrom plyr summarise
+#' @import dplyr
 #'
 #' @export
 #'
@@ -46,28 +45,17 @@ nnl_step2 <- function(l_B, r_s1_A, id_l_A, id_l_B){
   #exclude pairs with the same line ID
   RQT1 <- subset(RQT1, RQT1$ID.x != RQT1$ID.y)
   #count number of lines selected in nnl_step1 for each node
-  RQT2 <- plyr::ddply(RQT1,
-                      c(paste0(id_l_A,".x"), paste0(id_l_B,".x"), "ID_NODE.x", "SELECT_STEP1.x"),
-                      .fun = function(x, colname) plyr::summarise(x, NB_LINE_SELECT_STEP1 = sum(x[,colname] == TRUE)),
-                      colname = "SELECT_STEP1.y")
-  #statistics of each line
-  # RQT3<-plyr::ddply(RQT2,c(paste0(id_l_A,".x"), paste0(id_l_B,".x"), "SELECT_STEP1.x"), plyr::summarise ,
-  #             #number of nodes
-  #             NB_NODES = length(ID_NODE.x),
-  #             #standard deviation of number of points for each extremity
-  #             SD_LINES_SELECTED = stats::sd(NB_LINE_SELECT_STEP1),
-  #             #Mean of number of points for each extremity
-  #             MEAN_LINES_SELECTED = mean(NB_LINE_SELECT_STEP1))
+  RQT2 <- dplyr::group_by(.data = RQT1, .data[[paste0(id_l_A,".x")]], .data[[paste0(id_l_B,".x")]], .data[["ID_NODE.x"]], .data[["SELECT_STEP1.x"]])
+  RQT2 <- dplyr::summarise(.data = RQT2, NB_LINE_SELECT_STEP1 = sum(.data[["SELECT_STEP1.y"]] == TRUE))
 
-  RQT3<-plyr::ddply(RQT2,c(paste0(id_l_A,".x"), paste0(id_l_B,".x"), "SELECT_STEP1.x"),
-                    .fun = function(x) plyr::summarise(x,
-                      #number of nodes
-                      NB_NODES = length(x[,"ID_NODE.x"]),
-                      #standard deviation of number of points for each extremity
-                      SD_LINES_SELECTED = stats::sd(x[, "NB_LINE_SELECT_STEP1"]),
-                      #Mean of number of points for each extremity
-                      MEAN_LINES_SELECTED = mean(x[, "NB_LINE_SELECT_STEP1"])
-                    ))
+  RQT3 <- dplyr::group_by(.data = RQT2, .data[[paste0(id_l_A,".x")]], .data[[paste0(id_l_B,".x")]], .data[["SELECT_STEP1.x"]])
+  RQT3 <- dplyr::summarise(.data = RQT3,
+                            #number of nodes
+                            NB_NODES = length(.data[["ID_NODE.x"]]),
+                            #standard deviation of number of points for each extremity
+                            SD_LINES_SELECTED = stats::sd(.data[["NB_LINE_SELECT_STEP1"]]),
+                            #Mean of number of points for each extremity
+                            MEAN_LINES_SELECTED = mean(.data[["NB_LINE_SELECT_STEP1"]]))
   # create classes
   RQT3$classe<-ifelse(RQT3$NB_NODES == 2 & RQT3$MEAN_LINES_SELECTED == 0.5 & RQT3$SD_LINES_SELECTED == stats::sd(c(1,2)),"1.0",
                       ifelse(RQT3$NB_NODES == 2 & RQT3$MEAN_LINES_SELECTED == 1 & RQT3$SD_LINES_SELECTED == 0,"1.1",

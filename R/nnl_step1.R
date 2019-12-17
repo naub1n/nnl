@@ -11,8 +11,7 @@
 #'
 #' @return a data.frame. Contains near neighbors lines
 #'
-#' @importFrom plyr ddply
-#' @importFrom plyr summarise
+#' @import dplyr
 #'
 #' @export
 #'
@@ -23,9 +22,8 @@ nnl_step1 <- function(pts_A, pts_B, fnp_A, id_p_A, id_p_B, id_l_A, id_l_B, rate 
   #add IDs of lines B
   np_A_info <- base::merge(np_A_info, pts_B@data, by = id_p_B)
   #count unique points B IDs for each pair of LinesA/LinesB
-  np_A_final <- plyr::ddply(np_A_info,c(id_l_A, id_l_B),
-                                 .fun = function(x, colname) plyr::summarise(x, NB_PTS_B_TO_A = length(unique(x[,colname]))),
-                                 colname = id_p_B)
+  np_A_final <- dplyr::group_by(.data = np_A_info, .data[[id_l_A]], .data[[id_l_B]])
+  np_A_final <- dplyr::summarise(.data = np_A_final, NB_PTS_B_TO_A = length(unique(.data[[id_p_B]])))
   #count points on line A
   nb_pts_A <- data.frame(table(pts_A@data[,id_l_A]))
   #raname columns names
@@ -45,11 +43,12 @@ nnl_step1 <- function(pts_A, pts_B, fnp_A, id_p_A, id_p_B, id_l_A, id_l_B, rate 
   #add TRUE information for each row
   np_A_final$SELECT_STEP1 <- TRUE
   #Detect multi lines A on B
-  d_multi <- plyr::ddply(np_A_final, id_l_B, .fun = function(x) plyr::summarise(x,
-                                                                                nb_l_A = length(x[, id_l_A]),
-                                                                                max_rate = max(x[, "RATE"]),
-                                                                                min_rate = min(x[, "RATE"]),
-                                                                                sd_rate = stats::sd(x[, "RATE"])))
+  d_multi <- dplyr::group_by(.data = np_A_final, .data[[id_l_B]])
+  d_multi <- dplyr::summarise(.data = d_multi,
+                              nb_l_A = length(.data[[id_l_A]]),
+                              max_rate = max(.data[["RATE"]]),
+                              min_rate = min(.data[["RATE"]]),
+                              sd_rate = stats::sd(.data[["RATE"]]))
   #select only lines B with multi lines A
   d_multi <- d_multi[d_multi$nb_l_A > 1, ]
   #If multi lines A are found
