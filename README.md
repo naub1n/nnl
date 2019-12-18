@@ -54,6 +54,12 @@ Function responses :
     Add IDs
     Compare length result with l_A length
     End
+
+Result :
+
+    Large SpatialLinesDataFrame (58092 elements, 152.9 Mb)
+
+
 Time result :
 
     utilisateur     système      écoulé 
