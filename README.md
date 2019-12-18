@@ -60,6 +60,6 @@ Time result :
          122.21        7.05      256.55 
 **4 min 16 sec***
 
-> \* time with i7-7500U CPU and 16Go RAM
+> \* time with [i7-7500U](https://ark.intel.com/content/www/fr/fr/ark/products/95451/intel-core-i7-7500u-processor-4m-cache-up-to-3-50-ghz.html) CPU (2C4T) and 16Go RAM
 
 
