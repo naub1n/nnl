@@ -12,8 +12,11 @@ Install package with **devtools** :
 
 ## Required arguments
 Just use `nnl::nnl()`function.
+
 **l_A** is the original SpatialLinesDataFrame
+
 **l_B** is a SpatialLinesDataFrame where you want to extrapolate **l_A**
+
 **id_l_A** an **id_l_B** are columns names contain unique values (IDs)
 
 ## Optionals arguments
