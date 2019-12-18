@@ -17,7 +17,7 @@ find_np(pts_A, pts_B, id_p_A, id_p_B = "ID_PTS_B", ncores = NULL, p = T)
 
 \item{ncores}{an integer. Number of CPU cores used. If NULL, all cores - 1 are used.}
 
-\item{p}{a boolean. Define if function use multithreading. Default = TRUE.}
+\item{p}{logical. Define if function use multithreading. Default = TRUE.}
 }
 \value{
 a data.table

@@ -24,7 +24,7 @@ create_pts(
 
 \item{ncores}{default NULL. An integer. If NULL all CPU cores - 1 are used. If set, define number of CPU cores used.}
 
-\item{p}{default TRUE. Boolean. Define if function use multithreading.}
+\item{p}{default TRUE. Logical. Define if function use multithreading.}
 }
 \value{
 a SpatialPointsDataFrame

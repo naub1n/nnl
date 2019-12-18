@@ -25,5 +25,8 @@ Imports:
     SearchTrees,
     stats,
     raster,
-    dplyr
+    dplyr,
+    sf,
+    rlang,
+    forcats
 RoxygenNote: 7.0.2

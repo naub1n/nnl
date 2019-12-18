@@ -5,7 +5,7 @@
 #' @param id_p_A a character string. Indicates the IDs column name of pts_A.
 #' @param id_p_B a character string. Default "ID_PTS_B". Indicates the IDs column name of pts_B.
 #' @param ncores an integer. Number of CPU cores used. If NULL, all cores - 1 are used.
-#' @param p a boolean. Define if function use multithreading. Default = TRUE.
+#' @param p logical. Define if function use multithreading. Default = TRUE.
 #'
 #' @return a data.table
 #'

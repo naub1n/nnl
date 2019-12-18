@@ -8,7 +8,10 @@
 #' @return a data.frame. Contains discontinuities.
 #'
 #' @importFrom stats sd
-#' @import dplyr
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarise
+#' @importFrom rlang .data
+#' @importFrom forcats fct_explicit_na
 #'
 #' @export
 #'
@@ -34,16 +37,18 @@ nnl_step2 <- function(l_B, r_s1_A, id_l_A, id_l_B){
   nodes.full <- rbind(nodes_min,nodes_max)
   #add ID for each node
   nodes.full$ID_NODE <- seq.int(nrow(nodes.full))
-  #Jointure permettant de distinguer les tronçons identifiés sur le DP en phase 1
+  #merge with step 1 result to viez lines selected in step 1
   nodes.nnlstep1 <- merge(nodes.full, r_s1_A, by = id_l_B, all.x = T, all.y = T)
-  #Remplace les valeurs nulles du champ DP_phase1 par "non" // ATTENTION : as.character devant lapply, sinon le champs est de type list et ça bug dans les calcul de somme
-  nodes.nnlstep1$SELECT_STEP1 <- as.character(lapply(nodes.nnlstep1$SELECT_STEP1,function(x) ifelse (is.na(x),FALSE,x)))
-  #Toilettage table jointure
+  #Replace NA to FALSE
+  nodes.nnlstep1[is.na(nodes.nnlstep1$SELECT_STEP1),]$SELECT_STEP1 <- FALSE
+  #select useful columns
   nodes.nnlstep1 <- subset(nodes.nnlstep1, select=c(id_l_A, id_l_B, "ID_NODE","X","Y","SELECT_STEP1"))
   #merge nodes with themselves to find neighbour of each line
   RQT1 <- merge(nodes.nnlstep1, nodes.nnlstep1, by=c("X","Y"))
   #exclude pairs with the same line ID
   RQT1 <- subset(RQT1, RQT1$ID.x != RQT1$ID.y)
+  #explicite NA values
+  RQT1[,paste0(id_l_A,".x")] <- forcats::fct_explicit_na(RQT1[,paste0(id_l_A,".x")])
   #count number of lines selected in nnl_step1 for each node
   RQT2 <- dplyr::group_by(.data = RQT1, .data[[paste0(id_l_A,".x")]], .data[[paste0(id_l_B,".x")]], .data[["ID_NODE.x"]], .data[["SELECT_STEP1.x"]])
   RQT2 <- dplyr::summarise(.data = RQT2, NB_LINE_SELECT_STEP1 = sum(.data[["SELECT_STEP1.y"]] == TRUE))
@@ -86,6 +91,8 @@ nnl_step2 <- function(l_B, r_s1_A, id_l_A, id_l_B){
     id.f <- if(length(id) == 1) id else NA
     return(id.f)
   })
+  #delete id_l_A with NA values
+  disc <- disc[!is.na(disc[id_l_A]),]
   #return result
   return(disc)
 }

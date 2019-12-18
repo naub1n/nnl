@@ -11,7 +11,9 @@
 #'
 #' @return a data.frame. Contains near neighbors lines
 #'
-#' @import dplyr
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarise
+#' @importFrom rlang .data
 #'
 #' @export
 #'
@@ -54,17 +56,16 @@ nnl_step1 <- function(pts_A, pts_B, fnp_A, id_p_A, id_p_B, id_l_A, id_l_B, rate 
   #If multi lines A are found
   if(nrow(d_multi) > 0){
     #for each row, define SELECT_STEP1 to False where sd_rate = 0 (impossible to shoose a line A) and where rate is not the max rate found.
-    np_A_final[np_A_final[,id_l_B] %in% d_multi[, id_l_B], ]$SELECT_STEP1 <- apply(np_A_final[np_A_final[,id_l_B] %in% d_multi[, id_l_B], ], 1, function(x){
-      if(d_multi[d_multi[, id_l_B] == x[id_l_B], "sd_rate"] == 0){
+    np_A_final[np_A_final[,id_l_B] %in% d_multi[[id_l_B]], ]$SELECT_STEP1 <- apply(np_A_final[np_A_final[,id_l_B] %in% d_multi[[id_l_B]], ], 1, function(x){
+      if(d_multi[d_multi[, id_l_B] == x[id_l_B], ][["sd_rate"]] == 0){
         return(FALSE)
-      } else if(d_multi[d_multi[, id_l_B] == x[id_l_B], "max_rate"] == x["RATE"]){
+      } else if(d_multi[d_multi[, id_l_B] == x[id_l_B], ][["max_rate"]] == as.numeric(x[["RATE"]])){
         return(TRUE)
       } else {
         return(FALSE)
       }
     })
   }
-
   #select only row with SELECT_STEP1 == TRUE
   np_A_final <- np_A_final[np_A_final$SELECT_STEP1 == TRUE,]
   #return result

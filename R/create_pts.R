@@ -5,7 +5,7 @@
 #' @param id_p default "ID_PTS". A character string. If set, it define column name of unique points IDs.
 #' @param step defautl 5. An integer. Define the distance between two points along the line in meters.
 #' @param ncores default NULL. An integer. If NULL all CPU cores - 1 are used. If set, define number of CPU cores used.
-#' @param p default TRUE. Boolean. Define if function use multithreading.
+#' @param p default TRUE. Logical. Define if function use multithreading.
 #'
 #' @return a SpatialPointsDataFrame
 #'

@@ -11,11 +11,13 @@ nnl(
   id_l_B,
   id_p_A = "ID_PTS_A",
   id_p_B = "ID_PTS_B",
+  bfr_width = 100,
   step = 5,
   rate = 45,
   cut = F,
   p = T,
-  ncores = NULL
+  ncores = NULL,
+  verbose = F
 )
 }
 \arguments{
@@ -31,15 +33,19 @@ nnl(
 
 \item{id_p_B}{a character string. Indicates the IDs column name of points created to lines B. Default : "ID_PTS_B"}
 
+\item{bfr_width}{an integer. Buffer distance.}
+
 \item{step}{an integer. Define the distance between two points along the line in meters. Defautl = 5.}
 
 \item{rate}{an integer. Between 0 and 100. Define lower limit to select line B. Rate between number of points B on Lines A and totalpoints on Line B.}
 
-\item{cut}{a boolean. Define if function cut SpatialLinesDataFrame B to a smaller entities.}
+\item{cut}{logical. Define if function cut SpatialLinesDataFrame B to a smaller entities.}
 
-\item{p}{a boolean. Define if function use multithreading. Default = TRUE.}
+\item{p}{logical. Define if function use multithreading. Default = TRUE.}
 
 \item{ncores}{an integer. Number of CPU cores used. If NULL, all cores - 1 are used.}
+
+\item{verbose}{logical. View info for each step.}
 }
 \value{
 a SpatialLinesDataFrame.
