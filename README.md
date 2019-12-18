@@ -1,6 +1,6 @@
 # nnl
 
-nnl function allows to extrapolate SpatialLinesDataFrame A to a SpatialLinesDataFrame B by find nearest neighbors lines. It create points along to SpatialLinesDataFrames and it find nearest points. Then, statistics are use to select nearest lines.
+nnl function allows to extrapolate SpatialLinesDataFrame A to a SpatialLinesDataFrame B by finding nearest neighbors lines. It create points along to SpatialLinesDataFrames and it find nearest points. Then, statistics are use to select nearest lines.
 
 # Install
 
