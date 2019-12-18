@@ -63,7 +63,7 @@ nnl <- function(l_A, l_B, id_l_A, id_l_B, id_p_A = "ID_PTS_A", id_p_B = "ID_PTS_
   points_A <- create_pts(l = l_A, id_l = id_l_A, id_p = id_p_A, step = step, p = p, ncores = ncores)
   if(verbose) writeLines(paste(nrow(points_A), "points created"))
   #create points along lines B
-  if(verbose) writeLines("Create points to l_A")
+  if(verbose) writeLines("Create points to l_B")
   points_B <- create_pts(l = l_B, id_l = id_l_B, id_p = id_p_B, step = step, p = p, ncores = ncores)
   if(verbose) writeLines(paste(nrow(points_B), "points created"))
   #find nearest points
