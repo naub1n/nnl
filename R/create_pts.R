@@ -37,8 +37,8 @@ create_pts <- function(l, id_l = "ID_LINES", id_p = "ID_PTS", step = 5, ncores =
     #explicite i
     i <- integer()
     #points creation
-    lst_p <- foreach::foreach (i = 1:length(split_l)) %dopar% {
-      sapply(methods::slot(split_l[[i]],"lines"), function(x) sp::spsample(x, n = (sp::LinesLength(x) / step), type = "regular"))
+    lst_p <- foreach::foreach (splited = split_l) %dopar% {
+      sapply(methods::slot(splited,"lines"), function(x) sp::spsample(x, n = (sp::LinesLength(x) / step), type = "regular"))
     }
     #stop connections
     #parallel::stopCluster(cl)
@@ -57,10 +57,19 @@ create_pts <- function(l, id_l = "ID_LINES", id_p = "ID_PTS", step = 5, ncores =
   pt_id <- rep(ids, npts)
   #Delete Null elements fo SpatialPoints list (Very important here)
   lst_p.filtered <- Filter(Negate(is.null),lst_p)
+  #optimize memory
+  rm(lst_p)
+  gc()
   #Fuse list of SpatialPoints
   lst_p.merged <- do.call('rbind', lst_p.filtered)
+  #optimize memory
+  rm(lst_p.filtered)
+  gc()
   #Create SpatialPointsDataFrame
   pts_linear <- sp::SpatialPointsDataFrame(lst_p.merged, data=data.frame(ID_LINEAR = pt_id, stringsAsFactors = F))
+  #optimize memory
+  rm(lst_p.merged)
+  gc()
   #rename Lines column name
   colnames(pts_linear@data)[grep("ID_LINEAR", colnames(pts_linear@data))] <- id_l
   #Create an ID for each point
