@@ -40,15 +40,15 @@ nnl_step2 <- function(l_B, r_s1_A, id_l_A, id_l_B){
   #merge with step 1 result to viez lines selected in step 1
   nodes.nnlstep1 <- merge(nodes.full, r_s1_A, by = id_l_B, all.x = T, all.y = T)
   #Replace NA to FALSE
-  nodes.nnlstep1[is.na(nodes.nnlstep1$SELECT_STEP1),]$SELECT_STEP1 <- FALSE
+  nodes.nnlstep1[is.na(nodes.nnlstep1$SELECT_STEP1), "SELECT_STEP1"] <- FALSE
   #select useful columns
   nodes.nnlstep1 <- subset(nodes.nnlstep1, select=c(id_l_A, id_l_B, "ID_NODE","X","Y","SELECT_STEP1"))
   #merge nodes with themselves to find neighbour of each line
   RQT1 <- merge(nodes.nnlstep1, nodes.nnlstep1, by=c("X","Y"))
   #exclude pairs with the same line ID
-  RQT1 <- subset(RQT1, RQT1$ID.x != RQT1$ID.y)
+  RQT1 <- subset(RQT1, RQT1[,paste0(id_l_B,".x")] != RQT1[,paste0(id_l_B,".y")])
   #explicite NA values
-  RQT1[,paste0(id_l_A,".x")] <- forcats::fct_explicit_na(RQT1[,paste0(id_l_A,".x")])
+  RQT1[,paste0(id_l_A,".x")] <- forcats::fct_explicit_na(as.character(RQT1[,paste0(id_l_A,".x")]))
   #count number of lines selected in nnl_step1 for each node
   RQT2 <- dplyr::group_by(.data = RQT1, .data[[paste0(id_l_A,".x")]], .data[[paste0(id_l_B,".x")]], .data[["ID_NODE.x"]], .data[["SELECT_STEP1.x"]])
   RQT2 <- dplyr::summarise(.data = RQT2, NB_LINE_SELECT_STEP1 = sum(.data[["SELECT_STEP1.y"]] == TRUE))
