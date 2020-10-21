@@ -18,7 +18,6 @@
 #'
 #' @examples
 #'
-#' # return lol
 create_pts <- function(l, id_l = "ID_LINES", id_p = "ID_PTS", step = 5, ncores = NULL, p = T){
   if(p) {
     #explicite %dopar% function

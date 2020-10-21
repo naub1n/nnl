@@ -26,7 +26,7 @@ filter_sldf <- function(l_A, l_B, id_l_B, bfr_width){
   #filter sf_B with sf_B IDs which intersect buffer
   sf_B.f = dplyr::filter(.data = sf_B.m, .data[["id_sf_B"]] %in% unlist( sf::st_intersects(b, sf_B) ))
   #filter l_B with sf_B
-  l_B.filtered <- l_B[l_B@data[["ID"]] %in% sf_B.f[["ID"]],]
+  l_B.filtered <- l_B[l_B@data[[id_l_B]] %in% sf_B.f[[id_l_B]],]
   #return result
   return(l_B.filtered)
 }
