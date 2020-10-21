@@ -49,6 +49,7 @@ nnl_step2 <- function(l_B, r_s1_A, id_l_A, id_l_B){
   RQT1 <- subset(RQT1, RQT1[,paste0(id_l_B,".x")] != RQT1[,paste0(id_l_B,".y")])
   #explicite NA values
   RQT1[,paste0(id_l_A,".x")] <- forcats::fct_explicit_na(as.character(RQT1[,paste0(id_l_A,".x")]))
+  RQT1[,paste0(id_l_B,".x")] <- forcats::fct_explicit_na(as.character(RQT1[,paste0(id_l_B,".x")]))
   #count number of lines selected in nnl_step1 for each node
   RQT2 <- dplyr::group_by(.data = RQT1, .data[[paste0(id_l_A,".x")]], .data[[paste0(id_l_B,".x")]], .data[["ID_NODE.x"]], .data[["SELECT_STEP1.x"]])
   RQT2 <- dplyr::summarise(.data = RQT2, NB_LINE_SELECT_STEP1 = sum(.data[["SELECT_STEP1.y"]] == TRUE))
