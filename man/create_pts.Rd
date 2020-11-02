@@ -34,5 +34,4 @@ Create points along SpatialLinesDataFrame
 }
 \examples{
 
-# return lol
 }
