@@ -11,7 +11,8 @@ check_mem_usage <- function(limit = 2000){
   if(.Platform$OS.type == "unix") {
     mem_free <- as.numeric(gsub(",",".",system("free | grep Mem | awk '{print $7 / 1000}'", intern = TRUE)))
   } else {
-
+    # Default value
+    mem_free <- limit + 1
   }
   #Stop programm if lot of memory is used
   if(mem_free > limit) {

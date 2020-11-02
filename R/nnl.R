@@ -51,7 +51,7 @@ nnl <- function(l_A, l_B, id_l_A, id_l_B, id_p_A = "ID_PTS_A", id_p_B = "ID_PTS_
   if(!raster::compareCRS(l_A, l_B)) stop("SpatialPointsDataFrames have not the same CRS")
   #test projection info. objects should be in planar coordinates (cf sp::sample)
   if(verbose) writeLines("Projection test")
-  if(!is.projected(l_A) || !is.projected(l_B)) stop("Objects should be in planar coordinates")
+  if(!sp::is.projected(l_A) || !sp::is.projected(l_B)) stop("Objects should be in planar coordinates")
   #cut l_B
   if(cut) {
     if(verbose) writeLines("Cut l_B")

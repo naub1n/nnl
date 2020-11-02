@@ -89,7 +89,7 @@ nnl_step2 <- function(l_B, r_s1_A, id_l_A, id_l_B){
   colnames(disc)[grep(paste0(id_l_B,".x"), colnames(disc))] <- id_l_B
   #find line A ID for each line B
   disc[, id_l_A] <- apply(disc, 1, function(x) {
-    id <- unique(RQT1[RQT1[, paste0(id_l_B, ".x")] == x[id_l_B] & RQT1$SELECT_STEP1.y == TRUE , "CdMasseDEa.y"])
+    id <- unique(RQT1[RQT1[, paste0(id_l_B, ".x")] == x[id_l_B] & RQT1$SELECT_STEP1.y == TRUE , paste0(id_l_A, ".y")])
     #return NA if many IDs are found
     id.f <- if(length(id) == 1) id else NA
     return(id.f)
