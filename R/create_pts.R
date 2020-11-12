@@ -13,6 +13,7 @@
 #' @import parallel
 #' @import doParallel
 #' @import sp
+#' @import sf
 #'
 #' @export
 #'
@@ -37,21 +38,21 @@ create_pts <- function(l, id_l = "ID_LINES", id_p = "ID_PTS", step = 5, ncores =
     i <- integer()
     #points creation
     lst_p <- foreach::foreach (splited = split_l) %dopar% {
-      sapply(methods::slot(splited,"lines"), function(x) sp::spsample(x, n = (sp::LinesLength(x) / step), type = "regular"))
+      sf::st_line_sample(sf::st_as_sf(splited), n = (sf::st_length(sf::st_as_sf(splited)) / step), type = "regular", sample = NULL)
     }
     #stop connections
     #parallel::stopCluster(cl)
     #merge result
     lst_p <- do.call(c, lst_p)
   } else {
-    lst_p <- sapply(methods::slot(l,"lines"), function(x) sp::spsample(x, n = (sp::LinesLength(x) / step), type = "regular"))
+    lst_p <- sf::st_line_sample(sf::st_as_sf(l), n = (sf::st_length(sf::st_as_sf(l)) / step), type = "regular", sample = NULL)
   }
   #define default IDs for each line
   if(id_l == "ID_LINES") l$ID_LINES <- paste0("Line_",row.names(l))
   #Create ID vector for each SpatiaLine
   ids <- l[[id_l]]
   #Count points for each element (SpatialPoint) in SpatialPoint List (number of element = number of lines in the SpatialLinesDataFrame)
-  npts <- sapply(lst_p, function(i) ifelse(is.null(i),0,nrow(i@coords)))
+  npts <- sapply(lst_p, function(i) nrow(i))
   #Repeat IDs of SpatialLine as many times as there are points on this SpatialLine
   pt_id <- rep(ids, npts)
   #Delete Null elements fo SpatialPoints list (Very important here)
